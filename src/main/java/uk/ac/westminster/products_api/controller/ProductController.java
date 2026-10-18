@@ -1,46 +1,41 @@
 package uk.ac.westminster.products_api.controller;
 
-
+import uk.ac.westminster.products_api.Product;
+import uk.ac.westminster.products_api.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/products")
-
 public class ProductController {
 
-    private final List<Product> products = new ArrayList<>();
+    @Autowired
+    private ProductService productService;
 
     @PostMapping
     public Product addProduct(@RequestBody Product product) {
-        products.add(product);
-        return product;
+        return productService.addProduct(product);
     }
 
     @GetMapping
     public List<Product> getAllProducts() {
-        return products;
+        return productService.getAllProducts();
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id){
-        for (Product product: products){
-            if (product.getId().equals(id)){
-                return product;
-            }
-        }
-        return null;
+    public Product getProductById(@PathVariable Long id) {
+        return productService.getProductById(id).orElse(null);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteProduct(@PathVariable Long id){
-        boolean removed = products.removeIf(
-                product -> product.getId().equals(id)
-        );
-        if (removed){
-            return "Product deleted successfully";
-        }
-        return "Product not found";
+    public String deleteProduct(@PathVariable Long id) {
+        return productService.deleteProduct(id);
+    }
+
+    @GetMapping("/search")
+    public List<Product> searchProducts(@RequestParam String name) {
+        return productService.findProductByName(name);
     }
 }
