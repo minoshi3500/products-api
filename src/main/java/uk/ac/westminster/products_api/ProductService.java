@@ -61,4 +61,10 @@ public class ProductService {
                                 .contains(name.toLowerCase()))
                 .collect(Collectors.toList());
     }
+
+    public List<String> getAllSummaries() {
+        return products.stream()
+                .map(p -> p.getSummary())
+                .toList();
+    }
 }
